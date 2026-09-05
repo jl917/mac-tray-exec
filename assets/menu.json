@@ -34,12 +34,11 @@
       "items": [
         {
           "label": "포트 종료…",
-          "command": "mte_note() { /usr/bin/osascript -e \"display notification \\\"$1\\\" with title \\\"포트 종료\\\"\" >/dev/null 2>&1; }\nPORT=$(/usr/bin/osascript -e 'text returned of (display dialog \"종료할 포트 번호를 입력하세요\" default answer \"3000\" with title \"포트 종료\")' 2>/dev/null) || exit 0\ncase \"$PORT\" in ''|*[!0-9]*) mte_note \"포트 번호가 올바르지 않습니다: $PORT\"; exit 1;; esac\nPIDS=$(/usr/sbin/lsof -ti \"tcp:$PORT\" -sTCP:LISTEN)\nif [ -z \"$PIDS\" ]; then mte_note \"$PORT 포트를 사용 중인 프로세스가 없습니다\"; exit 0; fi\nps -o pid=,comm= -p $PIDS\nkill $PIDS 2>/dev/null\nsleep 1\nLEFT=$(/usr/sbin/lsof -ti \"tcp:$PORT\" -sTCP:LISTEN)\nif [ -n \"$LEFT\" ]; then kill -9 $LEFT 2>/dev/null; fi\nmte_note \"$PORT 포트 종료됨 (PID: $(echo $PIDS | tr '\\n' ' '))\"",
-          "notify": false
+          "command": "mte_note() { /usr/bin/osascript -e \"display notification \\\"$1\\\" with title \\\"포트 종료\\\"\" >/dev/null 2>&1; }\nPORT=$(/usr/bin/osascript -e 'text returned of (display dialog \"종료할 포트 번호를 입력하세요\" default answer \"3000\" with title \"포트 종료\")' 2>/dev/null) || exit 0\ncase \"$PORT\" in ''|*[!0-9]*) mte_note \"포트 번호가 올바르지 않습니다: $PORT\"; exit 1;; esac\nPIDS=$(/usr/sbin/lsof -ti \"tcp:$PORT\" -sTCP:LISTEN)\nif [ -z \"$PIDS\" ]; then mte_note \"$PORT 포트를 사용 중인 프로세스가 없습니다\"; exit 0; fi\nps -o pid=,comm= -p $PIDS\nkill $PIDS 2>/dev/null\nsleep 1\nLEFT=$(/usr/sbin/lsof -ti \"tcp:$PORT\" -sTCP:LISTEN)\nif [ -n \"$LEFT\" ]; then kill -9 $LEFT 2>/dev/null; fi\nmte_note \"$PORT 포트 종료됨 (PID: $(echo $PIDS | tr '\\n' ' '))\""
         },
         { "label": "DNS 캐시 비우기", "command": "sudo dscacheutil -flushcache", "confirm": true },
         { "label": "IP 주소 복사", "command": "ipconfig getifaddr en0 | pbcopy" },
-        { "label": "화면 보호기 잠금", "command": "pmset displaysleepnow", "notify": false }
+        { "label": "화면 보호기 잠금", "command": "pmset displaysleepnow" }
       ]
     },
     { "type": "separator" },

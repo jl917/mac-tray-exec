@@ -1,18 +1,8 @@
-// Command execution: background runs, Terminal.app runs, logging and notifications.
+// Command execution: background runs, Terminal.app runs and logging.
 
 import * as fs from "fs";
 import { spawn, spawnSync } from "child_process";
-import { MenuItem, APP_NAME, expandHome, cacheDir, logPath, itemLabel } from "./config";
-
-/** Strip characters that would break out of an AppleScript string literal. */
-function safeText(s: string): string {
-  let out = "";
-  for (let i = 0; i < s.length; i++) {
-    const ch = s.charAt(i);
-    if (ch !== '"' && ch !== "\\") out += ch;
-  }
-  return out;
-}
+import { MenuItem, expandHome, cacheDir, logPath, itemLabel } from "./config";
 
 function ensureDir(dir: string): void {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -36,9 +26,6 @@ function childEnv(item: MenuItem, log: string): Record<string, string> {
 
   env["MTE_LOG"] = log;
   env["MTE_LABEL"] = label;
-  env["MTE_TITLE"] = safeText(APP_NAME);
-  env["MTE_OK"] = safeText(label + " 완료");
-  env["MTE_FAIL"] = safeText(label + " 실패");
   env["MTE_CWD"] = item.cwd ? expandHome(item.cwd) : "";
 
   if (item.env) {
@@ -55,7 +42,7 @@ function childEnv(item: MenuItem, log: string): Record<string, string> {
  * wants, since there is no terminal attached. The `run` subcommand passes
  * false so the user sees the output where they typed the command.
  */
-function buildScript(item: MenuItem, withNotify: boolean, toLog: boolean): string {
+function buildScript(item: MenuItem, toLog: boolean): string {
   const lines: string[] = [];
   const redirect = toLog ? ' >>"$MTE_LOG" 2>&1' : "";
 
@@ -65,26 +52,8 @@ function buildScript(item: MenuItem, withNotify: boolean, toLog: boolean): strin
   lines.push("  " + (item.command || ""));
   lines.push("}" + redirect);
   lines.push("__mte_code=$?");
-
-  if (withNotify) {
-    lines.push("if [ $__mte_code -eq 0 ]; then");
-    lines.push(
-      '  /usr/bin/osascript -e "display notification \\"$MTE_OK\\" with title \\"$MTE_TITLE\\"" >/dev/null 2>&1',
-    );
-    lines.push("else");
-    lines.push(
-      '  /usr/bin/osascript -e "display notification \\"$MTE_FAIL (exit $__mte_code)\\" with title \\"$MTE_TITLE\\"" >/dev/null 2>&1',
-    );
-    lines.push("fi");
-  }
-
   lines.push("exit $__mte_code");
   return lines.join("\n");
-}
-
-/** Notifications are on by default; `notify: false` turns them off. */
-function wantsNotify(item: MenuItem): boolean {
-  return item.notify !== false;
 }
 
 let terminalScriptSeq = 0;
@@ -168,7 +137,7 @@ export function runItem(item: MenuItem): void {
     return;
   }
 
-  const script = buildScript(item, wantsNotify(item), true);
+  const script = buildScript(item, true);
   const child = spawn("/bin/sh", ["-c", script], {
     detached: true,
     stdio: "ignore",
@@ -182,7 +151,7 @@ export function runItemForeground(item: MenuItem): number {
   if (!item.command || item.command === "") return 0;
 
   const log = ensureLogFile();
-  const script = buildScript(item, false, false);
+  const script = buildScript(item, false);
   const result = spawnSync("/bin/sh", ["-c", script], {
     env: childEnv(item, log),
     stdio: "inherit",

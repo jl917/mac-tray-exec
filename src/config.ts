@@ -21,8 +21,6 @@ export interface MenuItem {
   terminal?: boolean;
   /** Ask for confirmation before running. */
   confirm?: boolean;
-  /** Post a notification when the command finishes. Defaults to true. */
-  notify?: boolean;
   /** Nested items. Turns this entry into a submenu. */
   items?: MenuItem[];
 }
@@ -97,7 +95,7 @@ export function defaultConfig(): TrayConfig {
       {
         label: "예제",
         items: [
-          { label: "날짜 기록", command: "date", notify: true },
+          { label: "날짜 기록", command: "date" },
           { label: "터미널에서 실행", command: "ls -la ~", terminal: true },
           { label: "확인 후 실행", command: "say done", confirm: true },
         ],
