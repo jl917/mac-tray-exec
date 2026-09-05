@@ -1,0 +1,53 @@
+{
+  "tooltip": "mac-tray-exec",
+  "icon": "~/Documents/github/mac-tray-exec/assets/tray-icon.png",
+  "items": [
+    { "type": "separator" },
+    { "label": "프로젝트 열기", "command": "open ~/Documents/github" },
+    { "label": "터미널 열기", "command": "open -a Terminal ~", "shortcut": "cmd+t" },
+    { "type": "separator" },
+    {
+      "label": "개발",
+      "items": [
+        {
+          "label": "빌드",
+          "command": "npm run build",
+          "cwd": "~/Documents/github/my-project",
+          "hotkey": "cmd+shift+b"
+        },
+        {
+          "label": "테스트 (터미널에서)",
+          "command": "npm test",
+          "cwd": "~/Documents/github/my-project",
+          "terminal": true
+        },
+        {
+          "label": "개발 서버 재시작",
+          "command": "pkill -f 'node server.js'; npm start &",
+          "cwd": "~/Documents/github/my-project",
+          "confirm": true
+        }
+      ]
+    },
+    {
+      "label": "시스템",
+      "items": [
+        {
+          "label": "포트 종료…",
+          "command": "mte_note() { /usr/bin/osascript -e \"display notification \\\"$1\\\" with title \\\"포트 종료\\\"\" >/dev/null 2>&1; }\nPORT=$(/usr/bin/osascript -e 'text returned of (display dialog \"종료할 포트 번호를 입력하세요\" default answer \"3000\" with title \"포트 종료\")' 2>/dev/null) || exit 0\ncase \"$PORT\" in ''|*[!0-9]*) mte_note \"포트 번호가 올바르지 않습니다: $PORT\"; exit 1;; esac\nPIDS=$(/usr/sbin/lsof -ti \"tcp:$PORT\" -sTCP:LISTEN)\nif [ -z \"$PIDS\" ]; then mte_note \"$PORT 포트를 사용 중인 프로세스가 없습니다\"; exit 0; fi\nps -o pid=,comm= -p $PIDS\nkill $PIDS 2>/dev/null\nsleep 1\nLEFT=$(/usr/sbin/lsof -ti \"tcp:$PORT\" -sTCP:LISTEN)\nif [ -n \"$LEFT\" ]; then kill -9 $LEFT 2>/dev/null; fi\nmte_note \"$PORT 포트 종료됨 (PID: $(echo $PIDS | tr '\\n' ' '))\"",
+          "notify": false
+        },
+        { "label": "DNS 캐시 비우기", "command": "sudo dscacheutil -flushcache", "confirm": true },
+        { "label": "IP 주소 복사", "command": "ipconfig getifaddr en0 | pbcopy" },
+        { "label": "화면 보호기 잠금", "command": "pmset displaysleepnow", "notify": false }
+      ]
+    },
+    { "type": "separator" },
+    {
+      "label": "환경변수 예시",
+      "command": "echo \"$GREETING from $PWD\"",
+      "cwd": "~",
+      "env": { "GREETING": "안녕하세요" }
+    }
+  ]
+}
