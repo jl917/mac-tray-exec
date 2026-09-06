@@ -1,6 +1,6 @@
 {
   "name": "mac-tray-exec",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "macOS 메뉴바에서 셸 명령을 실행하는 트레이 앱 (Perry native TypeScript)",
   "main": "src/main.ts",
   "scripts": {

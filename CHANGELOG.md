@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/jl917/mac-tray-exec/compare/v2.0.0...v2.0.1) (2026-09-06)
+
+
+### Bug Fixes
+
+* 새 체크아웃에서 빌드 실패하는 문제 수정 ([389bff9](https://github.com/jl917/mac-tray-exec/commit/389bff946d7e1509d75ee2be3173139a356c9011))
+
 ## [2.0.0](https://github.com/jl917/mac-tray-exec/compare/mac-tray-exec-v1.0.0...mac-tray-exec-v2.0.0) (2026-09-06)
 
 
