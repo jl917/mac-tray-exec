@@ -2,7 +2,6 @@
   "tooltip": "mac-tray-exec",
   "icon": "~/Documents/github/mac-tray-exec/assets/tray-icon.png",
   "items": [
-    { "type": "separator" },
     { "label": "프로젝트 열기", "command": "open ~/Documents/github" },
     { "label": "터미널 열기", "command": "open -a Terminal ~", "shortcut": "cmd+t" },
     { "type": "separator" },

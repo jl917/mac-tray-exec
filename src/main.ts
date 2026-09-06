@@ -27,6 +27,7 @@ import {
   MenuItem,
   TrayConfig,
   APP_NAME,
+  APP_VERSION,
   expandHome,
   logPath,
   loadConfig,
@@ -256,6 +257,12 @@ function parseArgs(): Args {
 
 function buildMenu(menu: Widget, config: TrayConfig, configPath: string, rebuild: () => void): void {
   menuClear(menu);
+
+  // 첫 줄은 항상 현재 버전. 클릭해도 아무 일도 하지 않는 표시용 항목이다
+  // (Perry의 메뉴 API에는 비활성 항목이 없다).
+  menuAddItem(menu, APP_NAME + " " + APP_VERSION, () => {});
+  menuAddSeparator(menu);
+
   addItems(menu, config.items);
 
   menuAddSeparator(menu);
@@ -327,7 +334,7 @@ function main(): void {
   }
 
   if (args.command === "version") {
-    console.log(APP_NAME + " 2.0.1"); // x-release-please-version
+    console.log(APP_NAME + " " + APP_VERSION);
     return;
   }
 

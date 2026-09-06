@@ -51,6 +51,7 @@ pgrep -fl mac-tray-exec
 
 | 변경 대상 | 필요한 조치 |
 |-----------|-------------|
+| `package.json`의 `version` | `npm run build` — 버전은 빌드 시점에 인라인된다 (메뉴 첫 줄 + `--version`) |
 | `menu.json`의 라벨·명령·`cwd`·`env`·`shortcut` | 메뉴바 → **메뉴 새로 고침** (재시작 불필요) |
 | `hotkey` (전역 단축키) | **앱 재시작** — 핫키는 시작 시점에만 등록된다 |
 | `src/*.ts` | `npm run build` 후 재시작 |

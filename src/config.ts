@@ -1,6 +1,10 @@
 // Menu configuration: schema, path resolution, loading and defaults.
 
 import * as fs from "fs";
+// Perry inlines the JSON at compile time, so the binary carries the version
+// with no package.json needed at runtime. package.json stays the only place
+// the version is written — release-please bumps it on release.
+import pkg from "../package.json";
 
 export interface MenuItem {
   /** Text shown in the menu. Required unless `type` is "separator". */
@@ -34,6 +38,7 @@ export interface TrayConfig {
 }
 
 export const APP_NAME = "mac-tray-exec";
+export const APP_VERSION = pkg.version;
 
 /** Expand a leading `~` to the user's home directory. */
 export function expandHome(p: string): string {
