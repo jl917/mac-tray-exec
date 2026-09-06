@@ -5,7 +5,47 @@ JSON 파일 하나로 메뉴를 구성하며, [Perry](https://github.com/PerryTS
 
 macOS 전용입니다 (`NSStatusItem` 기반).
 
-## 빌드
+## 설치
+
+[릴리스](https://github.com/jl917/mac-tray-exec/releases)에서 Apple Silicon(arm64)용 바이너리를 받습니다.
+빌드 도구 없이 이것만 있으면 됩니다.
+
+```bash
+# 최신 버전 다운로드 + 체크섬 검증 + 설치
+URL=$(curl -fsSL https://api.github.com/repos/jl917/mac-tray-exec/releases/latest \
+  | grep -o '"browser_download_url": *"[^"]*darwin-arm64\.tar\.gz"' | cut -d'"' -f4)
+
+curl -fsSL -O "$URL" && curl -fsSL -O "$URL.sha256"
+shasum -a 256 -c ./*.sha256                    # → OK 가 떠야 합니다
+
+tar -xzf mac-tray-exec-*-darwin-arm64.tar.gz
+mkdir -p ~/.local/bin && mv mac-tray-exec ~/.local/bin/
+~/.local/bin/mac-tray-exec --version
+```
+
+버전을 고정하려면 URL을 직접 쓰면 됩니다:
+
+```
+https://github.com/jl917/mac-tray-exec/releases/download/v2.0.1/mac-tray-exec-2.0.1-darwin-arm64.tar.gz
+```
+
+`~/.local/bin`이 `PATH`에 없다면 셸 설정에 추가하세요 (`export PATH="$HOME/.local/bin:$PATH"`).
+
+### 브라우저로 받았다면 quarantine을 지워야 합니다
+
+이 바이너리는 ad-hoc 서명만 되어 있고 Apple 공증(notarization)을 받지 않았습니다.
+브라우저로 내려받으면 macOS가 `com.apple.quarantine` 속성을 붙이고, 그 상태로 실행하면
+**아무 메시지 없이 즉시 종료됩니다** (exit 137 — Gatekeeper가 SIGKILL).
+
+```bash
+xattr -d com.apple.quarantine ~/.local/bin/mac-tray-exec
+```
+
+위 `curl` 방식으로 받으면 quarantine이 붙지 않으므로 이 단계가 필요 없습니다.
+
+지원 아키텍처는 현재 arm64뿐입니다. Intel Mac이라면 아래 "소스에서 빌드"를 따르세요.
+
+## 소스에서 빌드
 
 Xcode Command Line Tools가 필요합니다 (`xcode-select --install`).
 
@@ -17,7 +57,8 @@ npm run build          # → dist/mac-tray-exec
 ## 실행
 
 ```bash
-./dist/mac-tray-exec           # 메뉴바에 아이콘이 뜹니다 (Dock 아이콘 없음)
+mac-tray-exec                  # 메뉴바에 아이콘이 뜹니다 (Dock 아이콘 없음)
+./dist/mac-tray-exec           # 소스에서 빌드한 경우
 ```
 
 설정 파일이 하나도 없으면 `~/.config/mac-tray-exec/menu.json`에 기본 설정을 만들어 놓고 시작합니다.
@@ -135,14 +176,26 @@ kill $(/usr/sbin/lsof -ti "tcp:$PORT" -sTCP:LISTEN)
 <dict>
   <key>Label</key><string>com.mac-tray-exec</string>
   <key>ProgramArguments</key>
-  <array><string>/절대경로/dist/mac-tray-exec</string></array>
+  <array><string>/Users/사용자명/.local/bin/mac-tray-exec</string></array>
   <key>RunAtLoad</key><true/>
 </dict>
 </plist>
 ```
 
+`ProgramArguments`는 절대 경로여야 하고 `~`가 확장되지 않습니다.
+설정 파일을 지정하려면 배열에 `<string>--config</string><string>/절대경로/menu.json</string>`을 이어서 넣으세요.
+
 ```bash
 launchctl load ~/Library/LaunchAgents/com.mac-tray-exec.plist
+```
+
+## 업데이트
+
+"설치"의 명령을 그대로 다시 실행하면 됩니다. 실행 중인 앱은 파일을 덮어써도 계속 돌아가므로,
+새 버전을 쓰려면 메뉴바에서 **종료**한 뒤 다시 실행하세요.
+
+```bash
+pkill -f 'mac-tray-exec'      # 필요하면 강제 종료
 ```
 
 ## 라이선스
