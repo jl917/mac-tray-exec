@@ -4,7 +4,7 @@
   "description": "macOS 메뉴바에서 셸 명령을 실행하는 트레이 앱 (Perry native TypeScript)",
   "main": "src/main.ts",
   "scripts": {
-    "build": "perry compile src/main.ts -o dist/mac-tray-exec",
+    "build": "mkdir -p dist && perry compile src/main.ts -o dist/mac-tray-exec",
     "start": "npm run build && ./dist/mac-tray-exec",
     "dev": "perry dev src/main.ts -o dist/mac-tray-exec",
     "types": "perry types .",
