@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  # main에 push될 때마다 실행. 커밋을 모아 릴리스 PR을 만들거나 갱신하고,
+  # 그 PR이 병합되면 그때만 태그 + GitHub Release를 만든다.
+  release-please:
+    name: Release PR / tag
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  # 릴리스 PR이 병합되어 실제 릴리스가 만들어졌을 때만 동작한다.
+  # 그 외의 main push(릴리스 PR 생성/갱신만 한 경우)에서는 통째로 skip.
+  build:
+    name: Build & upload macOS binary
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ needs.release-please.outputs.tag_name }}
+      VERSION: ${{ needs.release-please.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # 방금 만들어진 릴리스 태그를 그대로 빌드한다 (버전 번호가 올라간 커밋).
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          ./dist/mac-tray-exec --version
+          ./dist/mac-tray-exec --help > /dev/null
+
+      - name: Package
+        run: |
+          set -euo pipefail
+          NAME="mac-tray-exec-${VERSION}-darwin-$(uname -m)"
+          mkdir -p pkg
+          cp dist/mac-tray-exec pkg/
+          tar -czf "${NAME}.tar.gz" -C pkg mac-tray-exec
+          shasum -a 256 "${NAME}.tar.gz" > "${NAME}.tar.gz.sha256"
+          echo "NAME=${NAME}" >> "$GITHUB_ENV"
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "${NAME}.tar.gz" "${NAME}.tar.gz.sha256" --clobber
