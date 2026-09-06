@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/jl917/mac-tray-exec/compare/v2.0.1...v2.1.0) (2026-09-06)
+
+
+### Features
+
+* 메뉴 첫 줄에 현재 버전 표시 ([12af2fe](https://github.com/jl917/mac-tray-exec/commit/12af2fed2295b37911f02a0b6a7087b815fe5ea5))
+
 ## [2.0.1](https://github.com/jl917/mac-tray-exec/compare/v2.0.0...v2.0.1) (2026-09-06)
 
 
