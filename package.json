@@ -1,6 +1,6 @@
 {
   "name": "mac-tray-exec",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "macOS 메뉴바에서 셸 명령을 실행하는 트레이 앱 (Perry native TypeScript)",
   "main": "src/main.ts",
   "scripts": {
@@ -14,8 +14,17 @@
     "type": "git",
     "url": "git+https://github.com/jl917/mac-tray-exec.git"
   },
-  "keywords": ["macos", "tray", "menubar", "nsstatusitem", "perry", "typescript"],
-  "os": ["darwin"],
+  "keywords": [
+    "macos",
+    "tray",
+    "menubar",
+    "nsstatusitem",
+    "perry",
+    "typescript"
+  ],
+  "os": [
+    "darwin"
+  ],
   "author": "jl917 <julong1988@naver.com> (https://jl917.github.io/)",
   "license": "MIT",
   "bugs": {

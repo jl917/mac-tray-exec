@@ -327,7 +327,7 @@ function main(): void {
   }
 
   if (args.command === "version") {
-    console.log(APP_NAME + " 1.0.0"); // x-release-please-version
+    console.log(APP_NAME + " 2.0.0"); // x-release-please-version
     return;
   }
 
