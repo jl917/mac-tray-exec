@@ -121,6 +121,8 @@ dist
 
 # TernJS port file
 .tern-port
+# test
+
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
@@ -145,3 +147,7 @@ vite.config.ts.timestamp-*
 # Perry
 .perry/
 .DS_Store
+
+
+
+#test
