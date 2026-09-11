@@ -34,6 +34,8 @@ export interface TrayConfig {
   icon?: string;
   /** Tooltip shown when hovering the icon. */
   tooltip?: string;
+  /** Hold a power assertion while the app runs so the screen never sleeps or locks. Defaults to true. */
+  keepAwake?: boolean;
   items: MenuItem[];
 }
 
@@ -159,6 +161,11 @@ export function loadConfig(explicit: string): LoadResult {
   }
 
   return { config: parsed, path: path, error: "" };
+}
+
+/** 화면 잠금 방지는 기본값이 켜짐이다. 끄려면 설정에 `"keepAwake": false`를 넣는다. */
+export function keepAwakeEnabled(config: TrayConfig): boolean {
+  return config.keepAwake !== false;
 }
 
 export function isSeparator(item: MenuItem): boolean {

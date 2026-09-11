@@ -1,6 +1,7 @@
 {
   "tooltip": "mac-tray-exec",
   "icon": "~/Documents/github/mac-tray-exec/assets/tray-icon.png",
+  "keepAwake": true,
   "items": [
     { "label": "크롬 열기", "command": "open -a 'Google Chrome'" },
     { "label": "Notion 열기", "command": "open -a Notion" },
