@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/jl917/mac-tray-exec/compare/v2.1.0...v2.2.0) (2026-09-18)
+
+
+### Features
+
+* 앱 실행 중 화면 잠금 방지 ([#5](https://github.com/jl917/mac-tray-exec/issues/5)) ([7ddb6e6](https://github.com/jl917/mac-tray-exec/commit/7ddb6e653dc1c97f86fc4a5e23d1f539d2ea0679))
+
 ## [2.1.0](https://github.com/jl917/mac-tray-exec/compare/v2.0.1...v2.1.0) (2026-09-06)
 
 
