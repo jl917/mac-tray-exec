@@ -35,8 +35,10 @@ import {
   resolveConfigPath,
   isSeparator,
   itemLabel,
+  keepAwakeEnabled,
 } from "./config";
 import { runItem, runItemForeground } from "./runner";
+import { applyKeepAwakeConfig, isKeepAwake, stopKeepAwake, toggleKeepAwake } from "./awake";
 
 // ---------------------------------------------------------------------------
 // Hotkeys
@@ -266,11 +268,18 @@ function buildMenu(menu: Widget, config: TrayConfig, configPath: string, rebuild
   addItems(menu, config.items);
 
   menuAddSeparator(menu);
+  menuAddItem(menu, "화면 잠금 방지: " + (isKeepAwake() ? "켜짐 ✓" : "꺼짐"), () => {
+    toggleKeepAwake();
+    rebuild();
+  });
   menuAddItem(menu, "설정 파일 편집…", () => openWith(["-t", configPath]));
   menuAddItem(menu, "로그 보기", () => openWith(["-a", "Console", logPath()]));
   menuAddItem(menu, "메뉴 새로 고침", rebuild);
   menuAddSeparator(menu);
-  menuAddItemWithShortcut(menu, "종료", "cmd+q", () => process.exit(0));
+  menuAddItemWithShortcut(menu, "종료", "cmd+q", () => {
+    stopKeepAwake();
+    process.exit(0);
+  });
 }
 
 function runTray(args: Args): void {
@@ -281,6 +290,9 @@ function runTray(args: Args): void {
   }
 
   appSetActivationPolicy("accessory");
+
+  // 앱이 떠 있는 동안 화면이 꺼지거나 잠기지 않게 한다 ("keepAwake": false로 끔).
+  applyKeepAwakeConfig(keepAwakeEnabled(loaded.config));
 
   const icon = loaded.config.icon ? expandHome(loaded.config.icon) : "";
   const tray = trayCreate(icon);
@@ -299,6 +311,7 @@ function runTray(args: Args): void {
       return;
     }
     current = next.config;
+    applyKeepAwakeConfig(keepAwakeEnabled(current));
     if (current.icon) traySetIcon(tray, expandHome(current.icon));
     traySetTooltip(tray, current.tooltip || APP_NAME);
     buildMenu(menu, current, configPath, rebuild);

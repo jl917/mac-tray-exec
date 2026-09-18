@@ -115,3 +115,4 @@ Perry는 이미지를 리사이즈하지 않고 NSImage의 **포인트 크기를
 | 명령이 끝나도 알림이 없음 | 정상. 앱은 완료 알림을 띄우지 않는다. 로그로 확인하거나 명령 안에서 직접 `osascript -e 'display notification "..."'`를 호출한다 |
 | 명령이 띄운 알림이 "스크립트 편집기" 이름으로 뜸 | 정상. `osascript`로 띄우기 때문 |
 | Dock에 아이콘이 없음 | 정상. `appSetActivationPolicy("accessory")` |
+| 화면이 안 잠김 | 정상. 앱이 실행 중이면 `caffeinate -d -i`로 잠금을 막는다. 메뉴의 **화면 잠금 방지** 토글이나 설정의 `"keepAwake": false`로 끈다. 확인: `pmset -g assertions \| grep caffeinate` |
